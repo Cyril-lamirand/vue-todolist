@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="lib/bootstrap.min.css">
+    <title>Todolist - Vue.js</title>
+    <style>
+        #todo-form {
+            margin-bottom: 1rem;
+        }
+        #todo-list label {
+            margin: 0;
+            cursor: pointer;
+        }
+        #todo-list .disabled {
+            background-color: #cfc;
+        }
+        #todo-list .disabled label {
+            text-decoration: line-through;
+        }
+        .todo-filters {
+            margin-bottom: 1rem;
+            text-align: right;
+        }
+        .actions {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="container mt-4">
+
+<main id="todo-app">
+    <h1>Todolist Vue.js</h1>
+    <hr>
+
+    <p>Il vous reste <strong>{{remaining}}/{{todos.length}}</strong> tâches à effectuer dans votre liste.</p>
+
+    <form id="todo-form" @submit.prevent="addTask">
+        <div class="form-group row">
+            <div class="col-sm-7">
+                <div class="input-group mb-3">
+                    <input v-model="newTaskName" type="text" class="form-control" placeholder="Nouvelle tâche ...">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-5 text-right">
+                <button type="button" class="btn btn-danger" @click="purgeTodos">Effacer les tâches complétées</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="todo-filters">
+        Filtrer la liste par :
+        <div class="btn-group">
+            <button type="button" @click="taskFilter='isDone'" class="btn btn-secondary btn-sm">Effectuées</button>
+            <button type="button" @click="taskFilter='isNotDone'" class="btn btn-secondary btn-sm">Non-effectuées</button>
+            <button type="button" @click="taskFilter='all'" class="btn btn-secondary btn-sm active">Toutes</button>
+        </div>
+    </div>
+
+    <ul class="list-group" id="todo-list">
+        <li class="list-group-item" :class="{'disabled' : task.isDone === true}" v-for="(task, index) in filteredTodos">
+            <div v-if="!editMode.includes(index)">
+                <input type="checkbox" :id="'task_' + index" v-model="task.isDone">
+                <label :for="'task_' + index">{{ task.title }}</label>
+                <div class="actions">
+                    <a href="#" @click.prevent="toggleEditMode(index)" title="Éditer cette tâche">✏</a>
+                    <a href="#" @click.prevent="removeTask(index)" title="Supprimer cette tâche">❌</a>
+                </div>
+            </div>
+            <div v-show="editMode.includes(index)">
+                <input type="text" class="form-control col-sm-6" v-model="task.title" @keydown.enter="toggleEditMode(index)" ref="editField">
+                <small><kbd>Entrée</kbd> pour valider.</small>
+            </div>
+        </li>
+    </ul>
+</main>
+
+<script src="lib/vue.js"></script>
+<script src="scripts/index.js"></script>
+
+</body>
+</html>
